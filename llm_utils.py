@@ -3,13 +3,14 @@ import json
 import streamlit as st
 from langchain.chat_models import AzureChatOpenAI
 from langchain_community.chat_models import ChatZhipuAI
+from langchain_deepseek import ChatDeepSeek
 from langchain_core.messages import SystemMessage, HumanMessage
 
 # Initialize session state for API key, supplier and temperature
 if 'api_key' not in st.session_state:
     st.session_state.api_key = ''
 if 'current_supplier' not in st.session_state:
-    st.session_state.current_supplier = 'zhipu'  # Default to zhipu
+    st.session_state.current_supplier = 'deepseek'  # Default to ds
 if 'temperature' not in st.session_state:
     st.session_state.temperature = 0.1  # Default temperature
 
@@ -28,7 +29,6 @@ def call_llm(system_msg, user_msg, supplier=st.session_state.current_supplier):
         if supplier == "azure":
             os.environ["AZURE_OPENAI_API_KEY"] = st.session_state.api_key
             os.environ["AZURE_OPENAI_ENDPOINT"] = AZURE_CONFIGS["base_url"]
-            
             llm = AzureChatOpenAI(
                 openai_api_version=AZURE_CONFIGS['api_version'],
                 azure_endpoint=AZURE_CONFIGS["base_url"],
@@ -56,6 +56,16 @@ def call_llm(system_msg, user_msg, supplier=st.session_state.current_supplier):
                 SystemMessage(system_msg),
                 HumanMessage(user_msg)
             ]
+        elif supplier == "deepseek":
+            os.environ["DEEPSEEK_API_KEY"] = st.session_state.api_key
+            llm = ChatDeepSeek(
+                model="deepseek-chat",
+                temperature=st.session_state.temperature,
+            )
+            messages = [
+                SystemMessage(system_msg),
+                HumanMessage(user_msg)
+            ]
         else:
             raise ValueError(f'Invalid LLM supplier: {supplier}')
 
@@ -65,9 +75,17 @@ def call_llm(system_msg, user_msg, supplier=st.session_state.current_supplier):
             raise ValueError("API returned empty response")
             
         output = res.content
-        
+        # output = output[7:]
+        output = output.strip()
+        if output.startswith("```json"):
+            output = output[len("```json"):].strip()
+        if output.endswith("```"):
+            output = output[:-3].strip()
         # Validate JSON format and structure
-        data = json.loads(output)
+        try:
+            data = json.loads(output)
+        except json.JSONDecodeError as e:
+            st.write("JSON 解析失败：", e)
         if not isinstance(data, dict):
             raise ValueError("API response is not a valid JSON object")
         
@@ -83,6 +101,7 @@ def call_llm(system_msg, user_msg, supplier=st.session_state.current_supplier):
         # Print output for debugging
         st.write("Extraction result:")
         st.info(output, icon="🎯")
+
         return output
             
     except json.JSONDecodeError as je:

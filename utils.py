@@ -12,7 +12,7 @@ def detect_language(text):
 
 def get_system_prompt(language):
     """Get system prompt based on language"""
-    if language == 'chinese':
+    if language == '中文':
         return """You are a professional text analysis assistant. Please analyze the input text and extract key concepts and their relationships.
 
 You must output ONLY a JSON object in the following format, with NO additional text or explanation:
@@ -81,11 +81,11 @@ Requirements:
 
 DO NOT include any explanations or markdown formatting in the output."""
 
-def generate_graph_data(text):
+def generate_graph_data(text,model,language):
     """Call OpenAI API to generate graph nodes and edges data"""
     
     # Detect the language of input text
-    language = detect_language(text)
+    # language = detect_language(text)
     
     # Get appropriate system prompt based on language
     system_msg = get_system_prompt(language)
@@ -94,7 +94,7 @@ def generate_graph_data(text):
     
     try:
         # Call OpenAI API
-        output = call_llm(system_msg, user_msg)
+        output = call_llm(system_msg, user_msg,model)
         if not output:
             raise ValueError("API returned empty response")
             

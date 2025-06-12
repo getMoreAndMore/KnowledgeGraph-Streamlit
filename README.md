@@ -12,6 +12,7 @@
 ### 主要特性
 
 - 🤖 支持多个 LLM 供应商
+  - Deepseek(新增)
   - 智谱 AI (GLM-4)
   - Azure OpenAI
 - 📊 知识图谱可视化
@@ -29,15 +30,15 @@
 
 - Python 3.8+
 - pip
-- langchain==0.2.16
-- langchain-community==0.2.16
-- langchain-core==0.2.38
-- langchain-text-splitters==0.2.4
+- langchain==0.3.25
+- langchain-community==0.3.24
+- langchain-core==0.3.64
+- langchain-text-splitters==0.3.8
 - langdetect==1.0.9
 - streamlit==1.38.0
 - streamlit-agraph==0.0.45
 - zhipuai==2.1.5.20230904
-
+- langchain_deepseek==0.1.3
 ### 安装步骤
 
 1. 克隆项目
@@ -59,13 +60,16 @@ streamlit run app.py
 ## 使用指南
 
 ### 配置 API
-
-1. 智谱 AI
+1. Deepseek
+   - 访问 [Deepseek](https://api-docs.deepseek.com/zh-cn/)
+   - 注册账号并创建应用
+   - 获取 API 密钥
+2. 智谱 AI
    - 访问 [智谱 AI 开放平台](https://open.bigmodel.cn/)
    - 注册账号并创建应用
    - 获取 API 密钥
 
-2. Azure OpenAI
+3. Azure OpenAI
    - 访问 [Azure Portal](https://portal.azure.com/)
    - 创建 Azure OpenAI 服务
    - 获取 API 密钥和配置信息
@@ -73,12 +77,12 @@ streamlit run app.py
 ### 使用步骤
 
 1. 启动应用后，在侧边栏：
-   - 选择 LLM 供应商（默认为智谱 AI）
+   - 选择 LLM 供应商（默认为Deepseek）
    - 输入对应的 API 密钥
 
 2. 在主界面：
    - 在文本框中输入待分析文本
-   - 点击"Extract Knowledge"按钮
+   - 点击"生成知识图谱"按钮
    - 等待知识图谱生成
    - 查看可视化结果
 
@@ -106,7 +110,7 @@ knowledge-graph-generator/
 - **图形可视化**: streamlit-agraph
 - **LLM 接口**: 
   - langchain-community
-  - Azure OpenAI
+  - Deepseek Azure OpenAI 
 - **数据处理**: Python 标准库
 
 ## 注意事项
@@ -141,11 +145,12 @@ knowledge-graph-generator/
    - 增加输入文本的实体密度
 
 ## 贡献指南
-
+Tunnello 提供了主要的基础框架
+getMoreAndMore(本人) 进行了一些优化，并新增了deepseek接口功能
 
 
 ## 致谢
-
+感谢用户 Tunnello 开源的基础框架
 感谢以下项目和工具：
 - [Streamlit](https://streamlit.io/)
 - [智谱 AI](https://open.bigmodel.cn/)
